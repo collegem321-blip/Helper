@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кухня — Вкуснейший ецепт дня</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --surface-soft: #faf7f2;
+    --text: #2b2723;
+    --text-soft: #7a7266;
+    --border: #e1dacd;
+    --accent: #a34a3e;
+    --accent-hover: #8a3c32;
+    --accent-soft: #ece5d8;
+    --tag-bg: #ece5d8;
+    --radius: 10px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-serif: Georgia, "Times New Roman", serif;
+    --shadow: 0 1px 2px rgba(43, 39, 35, 0.04);
+  }
+
+  html[data-theme="dark"] {
+    --bg: #1a1815;
+    --surface: #24211d;
+    --surface-soft: #2a2620;
+    --text: #ece6dc;
+    --text-soft: #a49a8c;
+    --border: #3a352d;
+    --accent: #d07a68;
+    --accent-hover: #e08a78;
+    --accent-soft: #332a23;
+    --tag-bg: #332a23;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s, color 0.25s;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 16px 20px 0;
+  }
+
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .theme-toggle svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+  }
+
+  header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+
+  .logo {
+    display: inline-block;
+    font-family: var(--font-serif);
+    font-size: 30px;
+    font-style: italic;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0 0 12px;
+    letter-spacing: -0.4px;
+    position: relative;
+    display: inline-block;
+  }
+
+  h1::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    margin: 12px auto 0;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+
+  .intro {
+    color: var(--text-soft);
+    font-size: 15px;
+    margin: 0 auto;
+    max-width: 46ch;
+    padding-top: 12px;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+  }
+
+  .recipe-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: background-color 0.25s, border-color 0.25s;
+  }
+
+  .cover-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: var(--accent-soft);
+    overflow: hidden;
+  }
+
+  .cover-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .recipe-card:hover .cover-container img {
+    transform: scale(1.015);
+  }
+
+  .card-content { padding: 28px; }
+
+  .meta-info {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--text-soft);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: normal;
+    margin: 0 0 24px;
+    line-height: 1.25;
+  }
+
+  h3 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-soft);
+    margin: 28px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ingredients-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px 20px;
+  }
+
+  .ingredients-list li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .ingredients-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    opacity: 0.7;
+  }
+
+  .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  .steps-list li {
+    position: relative;
+    padding-left: 38px;
+    margin-bottom: 18px;
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+
+  .steps-list li:last-child { margin-bottom: 0; }
+
+  .steps-list li::before {
+    content: counter(step);
+    counter-increment: step;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: #ffffff;
+  }
+
+  html[data-theme="dark"] .btn-primary { color: #1a1815; }
+
+  .btn-primary:hover { background-color: var(--accent-hover); }
+  .btn-primary:active { transform: translateY(1px); }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--accent);
+    border-color: var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  .status-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 70px 20px;
+    text-align: center;
+    color: var(--text-soft);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .status-screen.error { color: var(--accent); }
+
+  .loader {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 14px;
+  }
+
+  .error .loader { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .progress-bar {
+    width: 120px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .progress-bar::after {
+    content: "";
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: slide 1.2s ease-in-out infinite;
+  }
+
+  .error .progress-bar { display: none; }
+
+  @keyframes slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+  }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    padding: 16px 20px 40px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    header { padding: 20px 16px 18px; }
+    .card-content { padding: 20px; }
+    h2 { font-size: 24px; }
+    .ingredients-list { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .actions button { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Сменить тему">
+    <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <span id="theme-label">Тема</span>
+  </button>
+</div>
+
+<header>
+  <div class="logo">Кухня</div>
+  <h1>Кайф рецепты</h1>
+  <p class="intro">Выбрав одни сигареты их курят до смерти.Выбери свой рецепт).</p>
+</header>
+
+<main>
+  <div id="status" class="status-screen">
+    <div class="loader"></div>
+    <div class="progress-bar"></div>
+    <span id="status-text">Подбираем рецепт…</span>
+  </div>
+
+  <article id="recipe-card" class="recipe-card hidden">
+    <div class="cover-container">
+      <img id="cover" alt="Фотография блюда">
+    </div>
+    
+    <div class="card-content">
+      <div id="meta" class="meta-info"></div>
+      <h2 id="title"></h2>
+
+      <h3>Ингредиенты</h3>
+      <ul id="ingredients" class="ingredients-list"></ul>
+
+      <h3>Как готовить</h3>
+      <ol id="steps" class="steps-list"></ol>
+
+      <div class="actions">
+        <button id="refresh" class="btn-primary" type="button">Следующий рецепт</button>
+        <a id="source" class="hidden" target="_blank" rel="noopener" style="text-decoration: none;">
+          <button class="btn-secondary" type="button">Посмотреть оригинал</button>
+        </a>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer>
+ Инф взята <a href="https://www.themealdb.com/" target="_blank" rel="noopener">TheMealDB</a>. Хорошего настроения.
+</footer>
+
+<script>
+(function () {
+  var API_URL = 'https://www.themealdb.com/api/json/v1/1/random.php';
+  var TRANSLATE_URL = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=';
+  var STORAGE_KEY = 'daily_recipe_v2';
+  var THEME_KEY = 'kitchen_theme';
+
+  var els = {
+    status: document.getElementById('status'),
+    statusText: document.getElementById('status-text'),
+    card: document.getElementById('recipe-card'),
+    cover: document.getElementById('cover'),
+    meta: document.getElementById('meta'),
+    title: document.getElementById('title'),
+    ingredients: document.getElementById('ingredients'),
+    steps: document.getElementById('steps'),
+    source: document.getElementById('source'),
+    refreshBtn: document.getElementById('refresh'),
+    themeBtn: document.getElementById('theme-toggle'),
+    themeLabel: document.getElementById('theme-label'),
+    themeIcon: document.getElementById('theme-icon')
+  };
+
+  var translationCache = {};
+
+  /* ---------- Тема ---------- */
+
+  function applyTheme(theme) {
+    var root = document.documentElement;
+    if (theme === 'auto') {
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      els.themeLabel.textContent = 'Авто';
+    } else {
+      root.setAttribute('data-theme', theme);
+      els.themeLabel.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
+    }
+    // Иконка: солнце для светлой, луна для тёмной
+    var isDark = root.getAttribute('data-theme') === 'dark';
+    els.themeIcon.innerHTML = isDark
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+      : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+  }
+
+  function cycleTheme() {
+    var current = localStorage.getItem(THEME_KEY) || 'auto';
+    var order = ['auto', 'light', 'dark'];
+    var next = order[(order.indexOf(current) + 1) % order.length];
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+  }
+
+  els.themeBtn.addEventListener('click', cycleTheme);
+
+  // Реагируем на смену системной темы, если выбрано "Авто"
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    if ((localStorage.getItem(THEME_KEY) || 'auto') === 'auto') {
+      applyTheme('auto');
+    }
+  });
+
+  applyTheme(localStorage.getItem(THEME_KEY) || 'auto');
+
+  /* ---------- Рецепты ---------- */
+
+  function getDateString() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+
+  function loadFromStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed.date === getDateString() ? parsed.meal : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveToStorage(meal) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: getDateString(), meal: meal }));
+    } catch (e) {}
+  }
+
+  function translate(text) {
+    if (!text) return Promise.resolve('');
+    if (translationCache[text]) return Promise.resolve(translationCache[text]);
+
+    var url = TRANSLATE_URL + encodeURIComponent(text);
+
+    return fetch(url)
+      .then(function (res) {
+        if (!res.ok) throw new Error('Translate error');
+        return res.json();
+      })
+      .then(function (data) {
+        var translated = data[0].map(function (chunk) { return chunk[0]; }).join('');
+        translationCache[text] = translated;
+        return translated;
+      })
+      .catch(function () {
+        translationCache[text] = text;
+        return text;
+      });
+  }
+
+  function translateBatch(items) {
+    return Promise.all(items.map(translate));
+  }
+
+  function formatIngredients(meal) {
+    var result = [];
+    for (var i = 1; i <= 20; i++) {
+      var name = (meal['strIngredient' + i] || '').trim();
+      var amount = (meal['strMeasure' + i] || '').trim();
+      if (name) result.push({ measure: amount, name: name });
+    }
+    return result;
+  }
+
+  function splitSteps(text) {
+    if (!text) return [];
+    return text.split(/\r?\n+/)
+      .map(function (line) { return line.trim(); })
+      .filter(function (line) { return line.length > 0; });
+  }
+
+  function showStatus(message, isError) {
+    els.statusText.textContent = message;
+    els.status.className = 'status-screen' + (isError ? ' error' : '');
+    els.status.classList.remove('hidden');
+    els.card.classList.add('hidden');
+  }
+
+  function render(meal, translated) {
+    els.status.classList.add('hidden');
+    els.card.classList.remove('hidden');
+
+    els.cover.src = meal.strMealThumb || '';
+    els.cover.alt = translated.title;
+
+    els.meta.innerHTML = '';
+    translated.tags.forEach(function (tagText) {
+      if (!tagText) return;
+      var span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = tagText;
+      els.meta.appendChild(span);
+    });
+
+    els.title.textContent = translated.title;
+
+    els.ingredients.innerHTML = '';
+    translated.ingredients.forEach(function (item) {
+      var li = document.createElement('li');
+      li.textContent = item;
+      els.ingredients.appendChild(li);
+    });
+
+    els.steps.innerHTML = '';
+    translated.steps.forEach(function (step) {
+      var li = document.createElement('li');
+      li.textContent = step;
+      els.steps.appendChild(li);
+    });
+
+    if (meal.strSource) {
+      els.source.href = meal.strSource;
+      els.source.classList.remove('hidden');
+    } else {
+      els.source.classList.add('hidden');
+    }
+
+    els.refreshBtn.disabled = false;
+    els.refreshBtn.textContent = 'Следующий рецепт';
+  }
+
+  function prepareTranslations(meal) {
+    var rawIngredients = formatIngredients(meal);
+    var rawSteps = splitSteps(meal.strInstructions);
+
+    var titleReq = translate(meal.strMeal || '');
+    var categoryReq = translate(meal.strCategory || '');
+    var areaReq = translate(meal.strArea || '');
+
+    var ingredientTexts = rawIngredients.map(function (it) {
+      return it.measure ? it.measure + ' ' + it.name : it.name;
+    });
+
+    var allTexts = ingredientTexts.concat(rawSteps);
+
+    return Promise.all([titleReq, categoryReq, areaReq, translateBatch(allTexts)])
+      .then(function (results) {
+        var translatedTexts = results[3];
+        return {
+          title: results[0],
+          tags: [results[1], results[2]].filter(Boolean),
+          ingredients: translatedTexts.slice(0, ingredientTexts.length),
+          steps: translatedTexts.slice(ingredientTexts.length)
+        };
+      });
+  }
+
+  function fetchRecipe() {
+    els.refreshBtn.disabled = true;
+    els.refreshBtn.textContent = 'Загрузка…';
+    showStatus('Подбираем рецепт…', false);
+
+    fetch(API_URL)
+      .then(function (response) {
+        if (!response.ok) throw new Error('Network error');
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data.meals || !data.meals.length) throw new Error('Empty response');
+        return data.meals[0];
+      })
+      .then(function (meal) {
+        saveToStorage(meal);
+        showStatus('Переводим рецепт…', false);
+        return prepareTranslations(meal).then(function (translated) {
+          render(meal, translated);
+        });
+      })
+      .catch(function () {
+        showStatus('Не удалось загрузить рецепт. Проверьте подключение к интернету.', true);
+        els.refreshBtn.disabled = false;
+        els.refreshBtn.textContent = 'Следующий рецепт';
+      });
+  }
+
+  els.refreshBtn.addEventListener('click', fetchRecipe);
+
+  var cachedMeal = loadFromStorage();
+  if (cachedMeal) {
+    prepareTranslations(cachedMeal).then(function (translated) {
+      render(cachedMeal, translated);
+    });
+  } else {
+    fetchRecipe();
+  }
+})();
+</script>
+
+</body>
+</html>
